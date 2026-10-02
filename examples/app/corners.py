@@ -65,21 +65,52 @@ class Corners:
 
         # Check lines are perpendicular to each other.
         angle_tolerance = 10
+        perpendicular_matches = 0
         for angle_a in angles:
             for angle_b in angles:
                 difference = abs(angle_a - angle_b)
                 difference = min(difference, 180 - difference)
 
                 if abs(difference - 90) <= angle_tolerance:
-                    print(
-                        f"Possible card edges:"
-                        f"{angle_a:.2f} degrees & {angle_b:.2f}"
-                    )
+                    perpendicular_matches += 1
+
+        print(f"Perpendicular matches: {perpendicular_matches}")
 
         return False
 
 
+    def debug_edges(self) -> None:
+        # Convert to grey scale
+        grey = cv2.cvtColor(self.img_ndarray, cv2.COLOR_BGR2GRAY)
+        # Blur
+        blurred = cv2.GaussianBlur(grey, (5, 5), 0)
+        # Convert to outline-edges vs non-edges image
+        lower_threshold = 50
+        upper_threshold = 150
+        edges = cv2.Canny(blurred, lower_threshold, upper_threshold)
 
+        self.img_processed = self.img_ndarray.copy()
+        angles = []
+
+        lines = cv2.HoughLinesP(
+            edges,
+            rho=1,
+            theta=np.pi / 180,
+            threshold=80,
+            minLineLength=100,
+            maxLineGap=30,
+        )
+        for line in lines:
+            # Each detected line start and end coordinate in an x/y graph.
+            x1, y1, x2, y2 = line
+            # Debug lines
+            cv2.line(
+                self.img_processed,
+                (x1, y1),
+                (x2, y2),
+                (0, 255, 0), # Green
+                12, # line thickness
+            )
 
     def show(self) -> None:
         print(f"grey shape: {self.img_processed.shape}")
