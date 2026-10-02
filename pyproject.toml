@@ -1,13 +1,13 @@
 [project]
-name = "yolo-id-detector"
+name = "id-capture"
 version = "0.0.1"
-description = "Yolo ID detector"
+description = ""
 authors = [
     {name = "joegasewicz",email = "joegasewicz@gmail.com"}
 ]
 license = "MIT"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
 ]
 
