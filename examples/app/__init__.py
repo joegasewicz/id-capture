@@ -9,5 +9,5 @@ def make_app():
     print(f"Starting...")
     corners = Corners("data/88.jpg")
     corners.load_image()
-    print(corners.img_ndarray)
+    corners.is_card()
     corners.show()
