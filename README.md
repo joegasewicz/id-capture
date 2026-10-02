@@ -1,4 +1,4 @@
-# ID Detector
+# ID Capture
 
 ### Steps
 1. Find the ID's corners.
