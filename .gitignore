@@ -1,4 +1,6 @@
 .idea
+*/.idea
+*/*/.idea
 data
 
 # Byte-compiled / optimized / DLL files
