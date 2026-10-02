@@ -1,0 +1,17 @@
+[project]
+name = "yolo-id-detector"
+version = "0.0.1"
+description = "Yolo ID detector"
+authors = [
+    {name = "joegasewicz",email = "joegasewicz@gmail.com"}
+]
+license = "MIT"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
