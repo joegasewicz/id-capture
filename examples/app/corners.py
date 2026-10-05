@@ -86,16 +86,74 @@ class Corners:
                 if area_ratio < 0.05:
                     continue
 
-                permiter = cv2.arcLength(
+                perimeter = cv2.arcLength(
                     contour,
                     True,
                 )
 
                 approx = cv2.approxPolyDP(
                     contour,
-                    0.02 * permiter,
+                    0.02 * perimeter,
                     True,
                 )
+
+                # Turn all points in segment & calculate length & direction
+                points = approx.reshape(-1, 2)
+
+                segments = []
+
+                for i in range(len(points)):
+                    p1 = points[i]
+                    p2 = points[(i + 1) % len(points)]
+
+                    dx = p2[0] - p1[0]
+                    dy = p2[1] - p1[1]
+
+                    length = np.hypot(dx, dy)
+
+                    angle = np.degrees(
+                        np.arctan2(dy, dx)
+                    ) % 180
+
+                    segments.append({
+                        "p1": p1,
+                        "p2": p2,
+                        "length": length,
+                        "angle": angle,
+                    })
+
+                # Compare each segment to the previous.
+                for i, segment_a in enumerate(segments):
+                    for segment_b in segments[i +1:]:
+                        angle_a = segment_a["angle"]
+                        angle_b = segment_b["angle"]
+
+                        difference = abs(angle_a - angle_b)
+                        difference = min(
+                            difference,
+                            180 - difference,
+                        )
+
+                        if difference > 15:
+                            continue
+
+                        length_a = segment_a["length"]
+                        length_b = segment_b["length"]
+
+                        length_difference = abs(length_a - length_b)
+                        length_ratio = length_difference / max(length_a, length_b)
+
+                        if length_ratio > 0.25:
+                            continue
+
+                        if difference <= 15:
+                            print(
+                                f"Possible opposite sides: "
+                                f"{angle_a:.1f} degrees / {angle_b:.1f} | "
+                                f"{length_a:.1f}px / {length_b:.1f}px | "
+                                f"length difference {length_ratio * 100:.1f}%"
+                            )
+
 
                 print(f"approx points: {len(approx)}")
 
@@ -131,7 +189,6 @@ class Corners:
                     (0, 0, 255),
                     4,
                 )
-
 
         return False
 
