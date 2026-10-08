@@ -3,6 +3,8 @@ import numpy as np
 from cv2 import Mat
 from numpy import ndarray, dtypes
 
+from app.draw import Draw
+
 
 class Corners:
 
@@ -37,6 +39,14 @@ class Corners:
         Threshold: Cut off brightness value:
             - pixels above it turn white (255).
             - pixels below it turn white (0).
+
+        Contour: Contours are the outlines of a shape:
+
+            array([[[120,  45]],
+            [[480,  50]],
+            [[478, 300]],
+            [[118, 295]]])   # e.g. 4 corners of a card
+
         :return:
         """
         img = self._reduce_image_size(self.img_ndarray)
@@ -54,13 +64,14 @@ class Corners:
         contours = self._get_contours(img)
 
         largest_area = cv2.contourArea(contours[0])
+        image_area = self._get_image_area(img)
 
-        height, width = img.shape[:2]
+        segments = self._extract_edge_segments(contours, image_area)
+        approximates = self._analyse_card_candidates(contours, segments, image_area)
 
-        image_area = height * width
-
-        segments = self._calc_segment_lengths(contours, image_area)
-        self._set_segments(contours, segments, image_area)
+        draw = Draw(self.img_processed)
+        draw.draw_contours([approx["contour"] for approx in approximates], (0, 255, 0))
+        draw.draw_contours([approx["approx"] for approx in approximates], (0, 0, 255))
 
         return False
 
@@ -132,13 +143,6 @@ class Corners:
 
     def _get_contours(self, img: ndarray) -> list:
         """
-        Contours are the outlines of a shape:
-
-            array([[[120,  45]],
-            [[480,  50]],
-            [[478, 300]],
-            [[118, 295]]])   # e.g. 4 corners of a card
-
         Turns image into a list of shapes, sorted large to small.
         :param img:
         :return:
@@ -156,7 +160,29 @@ class Corners:
         )
         return contours
 
-    def _set_segments(self, contours, segments: list, image_area: int):
+    def _get_image_area(self, img: ndarray) -> int:
+        height, width = img.shape[:2]
+        image_area = height * width
+        return image_area
+
+    def _analyse_card_candidates(
+        self,
+        contours: list,
+        segments: list,
+        image_area: int,
+    ) -> list[dict]:
+        """
+        1. Simplifies the outline to its corners with approxPolyDP.
+        2. Finds possible opposite sides.
+        3. Measures the shape
+
+        :param contours:
+        :param segments:
+        :param image_area:
+        :return:
+        """
+        approximates = []
+
         for contour in contours[:10]:
             # Compare each segment to the previous.
             contour_area = cv2.contourArea(contour)
@@ -225,25 +251,23 @@ class Corners:
                 f"aspect ratio: {aspect_ratio:.3f}, "
                 f"angle: {angle:.2f}"
             )
-            if self.debug:
 
-                cv2.drawContours(
-                    self.img_processed,
-                    [contour],
-                    -1,
-                    (0, 255, 0),
-                    2,
-                )
+            approximates.append({
+                "contour": contour,
+                "approx": approx,
+            })
+        return approximates
 
-                cv2.drawContours(
-                    self.img_processed,
-                    [approx],
-                    -1,
-                    (0, 0, 255),
-                    4,
-                )
-
-    def _calc_segment_lengths(self, contours: list, image_area: int) -> list:
+    def _extract_edge_segments(self, contours: list, image_area: int) -> list:
+        """
+        1. Simplifies the outline of a polygon's corners.
+        2. Splits it into straight sides (recording each side's length & direction).
+        This is the data required to test if opposite sides look like a card shape.
+            - e.g. parallel & roughly the same length.
+        :param contours:
+        :param image_area:
+        :return:
+        """
         segments = []
         for contour in contours[:10]:
 
