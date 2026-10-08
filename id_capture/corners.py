@@ -12,7 +12,7 @@ from app.draw import Draw
 class Corners:
 
     _img_ndarray: np.ndarray
-    _img_processed: np.ndarray
+    _img_processed: Optional[np.ndarray] = None
 
     def __init__(self, image_path:str, debug: bool = False):
         self.image_path = image_path
@@ -114,6 +114,8 @@ class Corners:
         return False
 
     def show(self) -> None:
+        if self.img_processed is None:
+            self.img_processed = self.img_ndarray.copy()
         cv2.imshow("ID Capture", self.img_processed)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
