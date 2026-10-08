@@ -1,5 +1,7 @@
 import cv2
 import numpy as np
+from cv2 import Mat
+from numpy import ndarray, dtypes
 
 
 class Corners:
@@ -31,38 +33,118 @@ class Corners:
         self.img_ndarray = cv2.imread(self.image_path)
 
     def is_card(self) -> bool:
-        # Resize image to zoom out the detail
-        reduce_image = cv2.resize(
-            self.img_ndarray,
+        """
+        Threshold: Cut off brightness value:
+            - pixels above it turn white (255).
+            - pixels below it turn white (0).
+        :return:
+        """
+        img = self._reduce_image_size(self.img_ndarray)
+        img = self._convert_to_grey_scale(img)
+        img = self._blur_image(img)
+        img = self._find_edges(img)
+        img = self._fill_line_gaps(img)
+
+        if not self.debug:
+            self.img_processed = img
+        else:
+            image = self.img_ndarray.copy()
+            self.img_processed = self._reduce_image_size(image)
+
+        contours = self._get_contours(img)
+
+        largest_area = cv2.contourArea(contours[0])
+
+        height, width = img.shape[:2]
+
+        image_area = height * width
+
+        segments = self._calc_segment_lengths(contours, image_area)
+        self._set_segments(contours, segments, image_area)
+
+        return False
+
+
+    def show(self) -> None:
+        print(f"grey shape: {self.img_processed.shape}")
+        cv2.imshow("ID Capture", self.img_processed)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+
+    def _reduce_image_size(self, img: ndarray) -> Mat | ndarray:
+        """
+        Resize image to zoom out the detail
+        :return:
+        """
+        return cv2.resize(
+            img,
             None,
             fx=0.25,
             fy=0.25
         )
-        # Convert to grey scale
-        grey = cv2.cvtColor(reduce_image, cv2.COLOR_BGR2GRAY)
-        # Blur
-        blurred = cv2.GaussianBlur(grey, (5, 5), 0)
-        # Convert to outline-edges vs non-edges image
+
+    def _convert_to_grey_scale(self, img: ndarray) -> Mat | ndarray:
+        """
+        Reduce to a single channel to make thresholding, edge detection
+        & contour finding faster & simpler. Boundaries in open CV
+        are found from changes in brightness, not color.
+        :param img:
+        :return:
+        """
+        return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    def _blur_image(self, img: ndarray) -> Mat | ndarray:
+        """
+        Blur the image to smooth out noise & fine texture so edge detection
+        & thresholding pick's up the real outline.
+        :param img:
+        :return:
+        """
+        return cv2.GaussianBlur(img, (5, 5), 0)
+
+    def _find_edges(self, img: ndarray) -> Mat | ndarray:
+        """
+        All brightness, shading & texture are removed from the image.
+        Each pixel is either fully black or fully white.
+        :param img:
+        :return:
+        """
         lower_threshold = 50
         upper_threshold = 150
-        edges = cv2.Canny(blurred, lower_threshold, upper_threshold)
+        edges = cv2.Canny(img, lower_threshold, upper_threshold)
+        return edges
 
-
-        # Join gaps in any broken edges
+    def _fill_line_gaps(self, img: ndarray) -> Mat | ndarray:
+        """
+        Joins broken white edge lines into complete outlines.
+        :return:
+        """
+        # set the area around the line pixel to test
         kernel = np.ones((15, 15), np.uint8)
+        # With RETR_EXTERNAL can trace the card's edge as one closed shape instead of many broken pieces.
         closed_edges = cv2.morphologyEx(
-            edges,
+            img,
             cv2.MORPH_CLOSE,
             kernel,
         )
+        return closed_edges
 
-        if not self.debug:
-            self.img_processed = closed_edges
-        else:
-            self.img_processed = reduce_image.copy()
+    def _get_contours(self, img: ndarray) -> list:
+        """
+        Contours are the outlines of a shape:
 
+            array([[[120,  45]],
+            [[480,  50]],
+            [[478, 300]],
+            [[118, 295]]])   # e.g. 4 corners of a card
+
+        Turns image into a list of shapes, sorted large to small.
+        :param img:
+        :return:
+        """
         contours, _ = cv2.findContours(
-            closed_edges,
+            img,
             cv2.RETR_EXTERNAL,
             cv2.CHAIN_APPROX_SIMPLE,
         )
@@ -72,107 +154,78 @@ class Corners:
             key=cv2.contourArea,
             reverse=True,
         )
+        return contours
 
-        largest_area = cv2.contourArea(contours[0])
+    def _set_segments(self, contours, segments: list, image_area: int):
+        for contour in contours[:10]:
+            # Compare each segment to the previous.
+            contour_area = cv2.contourArea(contour)
+            area_ratio = contour_area / image_area
+            if area_ratio < 0.05:
+                continue
 
-        height, width = edges.shape[:2]
+            perimeter = cv2.arcLength(
+                contour,
+                True,
+            )
 
-        image_area = height * width
-        if self.debug:
-            for contour in contours[:10]:
+            approx = cv2.approxPolyDP(
+                contour,
+                0.02 * perimeter,
+                True,
+            )
 
-                contour_area = cv2.contourArea(contour)
-                area_ratio = contour_area / image_area
-                if area_ratio < 0.05:
-                    continue
+            for i, segment_a in enumerate(segments):
+                for segment_b in segments[i +1:]:
+                    angle_a = segment_a["angle"]
+                    angle_b = segment_b["angle"]
 
-                perimeter = cv2.arcLength(
-                    contour,
-                    True,
-                )
+                    difference = abs(angle_a - angle_b)
+                    difference = min(
+                        difference,
+                        180 - difference,
+                    )
 
-                approx = cv2.approxPolyDP(
-                    contour,
-                    0.02 * perimeter,
-                    True,
-                )
+                    if difference > 15:
+                        continue
 
-                # Turn all points in segment & calculate length & direction
-                points = approx.reshape(-1, 2)
+                    length_a = segment_a["length"]
+                    length_b = segment_b["length"]
 
-                segments = []
+                    length_difference = abs(length_a - length_b)
+                    length_ratio = length_difference / max(length_a, length_b)
 
-                for i in range(len(points)):
-                    p1 = points[i]
-                    p2 = points[(i + 1) % len(points)]
+                    if length_ratio > 0.25:
+                        continue
 
-                    dx = p2[0] - p1[0]
-                    dy = p2[1] - p1[1]
-
-                    length = np.hypot(dx, dy)
-
-                    angle = np.degrees(
-                        np.arctan2(dy, dx)
-                    ) % 180
-
-                    segments.append({
-                        "p1": p1,
-                        "p2": p2,
-                        "length": length,
-                        "angle": angle,
-                    })
-
-                # Compare each segment to the previous.
-                for i, segment_a in enumerate(segments):
-                    for segment_b in segments[i +1:]:
-                        angle_a = segment_a["angle"]
-                        angle_b = segment_b["angle"]
-
-                        difference = abs(angle_a - angle_b)
-                        difference = min(
-                            difference,
-                            180 - difference,
+                    if difference <= 15:
+                        print(
+                            f"Possible opposite sides: "
+                            f"{angle_a:.1f} degrees / {angle_b:.1f} | "
+                            f"{length_a:.1f}px / {length_b:.1f}px | "
+                            f"length difference {length_ratio * 100:.1f}%"
                         )
 
-                        if difference > 15:
-                            continue
 
-                        length_a = segment_a["length"]
-                        length_b = segment_b["length"]
+            print(f"approx points: {len(approx)}")
 
-                        length_difference = abs(length_a - length_b)
-                        length_ratio = length_difference / max(length_a, length_b)
+            rect = cv2.minAreaRect(contour)
+            (center_x, center_y), (rect_width, rect_height), angle = rect
+            short_side = min(rect_width, rect_height)
+            long_side = max(rect_width, rect_height)
 
-                        if length_ratio > 0.25:
-                            continue
-
-                        if difference <= 15:
-                            print(
-                                f"Possible opposite sides: "
-                                f"{angle_a:.1f} degrees / {angle_b:.1f} | "
-                                f"{length_a:.1f}px / {length_b:.1f}px | "
-                                f"length difference {length_ratio * 100:.1f}%"
-                            )
+            if short_side == 0:
+                continue
 
 
-                print(f"approx points: {len(approx)}")
+            aspect_ratio = long_side / short_side
 
-                rect = cv2.minAreaRect(contour)
-                (center_x, center_y), (rect_width, rect_height), angle = rect
-                short_side = min(rect_width, rect_height)
-                long_side = max(rect_width, rect_height)
-
-                if short_side == 0:
-                    continue
-
-
-                aspect_ratio = long_side / short_side
-
-                print(
-                    f"area ratio: {area_ratio:.3f}, "
-                    f"aspect ratio: {aspect_ratio:.3f}, "
-                    f"angle: {angle:.2f}"
-                )
+            print(
+                f"area ratio: {area_ratio:.3f}, "
+                f"aspect ratio: {aspect_ratio:.3f}, "
+                f"angle: {angle:.2f}"
+            )
+            if self.debug:
 
                 cv2.drawContours(
                     self.img_processed,
@@ -190,44 +243,45 @@ class Corners:
                     4,
                 )
 
-        return False
+    def _calc_segment_lengths(self, contours: list, image_area: int) -> list:
+        segments = []
+        for contour in contours[:10]:
 
+            contour_area = cv2.contourArea(contour)
+            area_ratio = contour_area / image_area
+            if area_ratio < 0.05:
+                continue
 
-    def debug_edges(self) -> None:
-        # Convert to grey scale
-        grey = cv2.cvtColor(self.img_ndarray, cv2.COLOR_BGR2GRAY)
-        # Blur
-        blurred = cv2.GaussianBlur(grey, (5, 5), 0)
-        # Convert to outline-edges vs non-edges image
-        lower_threshold = 50
-        upper_threshold = 150
-        edges = cv2.Canny(blurred, lower_threshold, upper_threshold)
-
-        self.img_processed = self.img_ndarray.copy()
-        angles = []
-
-        lines = cv2.HoughLinesP(
-            edges,
-            rho=1,
-            theta=np.pi / 180,
-            threshold=80,
-            minLineLength=100,
-            maxLineGap=30,
-        )
-        for line in lines:
-            # Each detected line start and end coordinate in an x/y graph.
-            x1, y1, x2, y2 = line
-            # Debug lines
-            cv2.line(
-                self.img_processed,
-                (x1, y1),
-                (x2, y2),
-                (0, 255, 0), # Green
-                12, # line thickness
+            perimeter = cv2.arcLength(
+                contour,
+                True,
             )
 
-    def show(self) -> None:
-        print(f"grey shape: {self.img_processed.shape}")
-        cv2.imshow("ID Capture", self.img_processed)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+            approx = cv2.approxPolyDP(
+                contour,
+                0.02 * perimeter,
+                True,
+            )
+
+            # Turn all points in segment & calculate length & direction
+            points = approx.reshape(-1, 2)
+            for i in range(len(points)):
+                p1 = points[i]
+                p2 = points[(i + 1) % len(points)]
+
+                dx = p2[0] - p1[0]
+                dy = p2[1] - p1[1]
+
+                length = np.hypot(dx, dy)
+
+                angle = np.degrees(
+                    np.arctan2(dy, dx)
+                ) % 180
+
+                segments.append({
+                    "p1": p1,
+                    "p2": p2,
+                    "length": length,
+                    "angle": angle,
+                })
+        return segments

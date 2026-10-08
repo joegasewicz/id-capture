@@ -10,5 +10,4 @@ def make_app():
     corners = Corners("data/88.jpg", debug=True)
     corners.load_image()
     corners.is_card()
-    # corners.debug_edges()
     corners.show()
