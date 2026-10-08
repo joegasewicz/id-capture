@@ -1,3 +1,6 @@
+from curses.textpad import rectangle
+from typing import Optional
+
 import cv2
 import numpy as np
 from cv2 import Mat
@@ -55,29 +58,62 @@ class Corners:
         img = self._find_edges(img)
         img = self._fill_line_gaps(img)
 
-        if not self.debug:
-            self.img_processed = img
-        else:
-            image = self.img_ndarray.copy()
-            self.img_processed = self._reduce_image_size(image)
+        # self.img_processed = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
 
         contours = self._get_contours(img)
 
-        largest_area = cv2.contourArea(contours[0])
+
+
+        if not contours:
+            return False
+
+        mask = np.zeros_like(img)
+
+        cv2.drawContours(
+            mask,
+            [contours[0]],
+            -1,
+            255,
+            cv2.FILLED,
+        )
+
+        finger_removal_kernel = cv2.getStructuringElement(
+            cv2.MORPH_ELLIPSE,
+            (21, 21),
+        )
+
+        cleaned_mask = cv2.morphologyEx(
+            mask,
+            cv2.MORPH_OPEN,
+            finger_removal_kernel,
+        )
+
+        contours = self._get_contours(cleaned_mask)
+
+        if not contours:
+            return False
+
+        self.img_processed = cv2.cvtColor(cleaned_mask, cv2.COLOR_GRAY2BGR)
+
         image_area = self._get_image_area(img)
 
         segments = self._extract_edge_segments(contours, image_area)
         approximates = self._analyse_card_candidates(contours, segments, image_area)
 
-        draw = Draw(self.img_processed)
-        draw.draw_contours([approx["contour"] for approx in approximates], (0, 255, 0))
-        draw.draw_contours([approx["approx"] for approx in approximates], (0, 0, 255))
+        if self.debug:
+            draw = Draw(self.img_processed)
+            draw.draw_contours([approx["contour"] for approx in approximates], (0, 255, 0))
+            # draw.draw_contours([approx["approx"] for approx in approximates], (0, 0, 255))
 
+        return self._is_card_candidate(approximates)
+
+    def _is_card_candidate(self, approximates) -> bool:
+        for candidate in approximates:
+            if candidate["is_card"]:
+                return True
         return False
 
-
     def show(self) -> None:
-        print(f"grey shape: {self.img_processed.shape}")
         cv2.imshow("ID Capture", self.img_processed)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
@@ -132,7 +168,7 @@ class Corners:
         :return:
         """
         # set the area around the line pixel to test
-        kernel = np.ones((15, 15), np.uint8)
+        kernel = np.ones((5, 5), np.uint8)
         # With RETR_EXTERNAL can trace the card's edge as one closed shape instead of many broken pieces.
         closed_edges = cv2.morphologyEx(
             img,
@@ -174,7 +210,7 @@ class Corners:
         """
         1. Simplifies the outline to its corners with approxPolyDP.
         2. Finds possible opposite sides.
-        3. Measures the shape
+        3. Measures the shape if it fits a rotated rectangle.
 
         :param contours:
         :param segments:
@@ -190,16 +226,8 @@ class Corners:
             if area_ratio < 0.05:
                 continue
 
-            perimeter = cv2.arcLength(
-                contour,
-                True,
-            )
-
-            approx = cv2.approxPolyDP(
-                contour,
-                0.02 * perimeter,
-                True,
-            )
+            perimeter = cv2.arcLength(contour, True)
+            approx = cv2.approxPolyDP(contour, 0.02 * perimeter, True)
 
             for i, segment_a in enumerate(segments):
                 for segment_b in segments[i +1:]:
@@ -224,37 +252,56 @@ class Corners:
                     if length_ratio > 0.25:
                         continue
 
-                    if difference <= 15:
-                        print(
-                            f"Possible opposite sides: "
-                            f"{angle_a:.1f} degrees / {angle_b:.1f} | "
-                            f"{length_a:.1f}px / {length_b:.1f}px | "
-                            f"length difference {length_ratio * 100:.1f}%"
-                        )
-
-
-            print(f"approx points: {len(approx)}")
+                    # if difference <= 15:
+                    #     print(
+                    #         f"Possible opposite sides: "
+                    #         f"{angle_a:.1f} degrees / {angle_b:.1f} | "
+                    #         f"{length_a:.1f}px / {length_b:.1f}px | "
+                    #         f"length difference {length_ratio * 100:.1f}%"
+                    #     )
 
             rect = cv2.minAreaRect(contour)
-            (center_x, center_y), (rect_width, rect_height), angle = rect
+            _, (rect_width, rect_height), angle = rect
+
             short_side = min(rect_width, rect_height)
             long_side = max(rect_width, rect_height)
 
             if short_side == 0:
                 continue
 
-
             aspect_ratio = long_side / short_side
+            rectangle_area = rect_width * rect_height
 
-            print(
-                f"area ratio: {area_ratio:.3f}, "
-                f"aspect ratio: {aspect_ratio:.3f}, "
-                f"angle: {angle:.2f}"
+            if rectangle_area == 0:
+                continue
+
+            rectangularity = contour_area / rectangle_area
+            has_four_corners = len(approx) == 4
+            is_convex = cv2.isContourConvex(approx)
+
+            is_card_candidate = (
+                has_four_corners
+                and is_convex
+                and 1.35 <= aspect_ratio <= 1.85
+                and rectangularity >= 0.75
+                and area_ratio >= 0.05
             )
+
+            print({
+                "corners": len(approx),
+                "convex": is_convex,
+                "aspect_ratio": aspect_ratio,
+                "rectangularity": rectangularity,
+                "area_ratio": area_ratio,
+            })
 
             approximates.append({
                 "contour": contour,
                 "approx": approx,
+                "area_ratio": area_ratio,
+                "aspect_ratio": aspect_ratio,
+                "rectangularity": rectangularity,
+                "is_card": is_card_candidate,
             })
         return approximates
 
@@ -309,3 +356,15 @@ class Corners:
                     "angle": angle,
                 })
         return segments
+
+    def _find_straight_lines(self, edges: ndarray) -> Optional[ndarray]:
+        height, width = edges.shape[:2]
+
+        return cv2.HoughLinesP(
+            edges,
+            rho=1,
+            theta=np.pi / 180,
+            threshold=30,
+            minLineLength=int(width * 0.15),
+            maxLineGap=int(width * 0.10),
+        )

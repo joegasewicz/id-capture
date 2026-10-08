@@ -1,4 +1,5 @@
 from curses.textpad import rectangle
+from typing import Optional
 
 import cv2
 import numpy as np
@@ -11,7 +12,7 @@ from app.draw import Draw
 class Corners:
 
     _img_ndarray: np.ndarray
-    _img_processed: np.ndarray
+    _img_processed: Optional[np.ndarray] = None
 
     def __init__(self, image_path:str, debug: bool = False):
         self.image_path = image_path
@@ -57,11 +58,43 @@ class Corners:
         img = self._find_edges(img)
         img = self._fill_line_gaps(img)
 
-        self.img_processed = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+        # self.img_processed = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
 
         contours = self._get_contours(img)
 
-        largest_area = cv2.contourArea(contours[0])
+
+
+        if not contours:
+            return False
+
+        mask = np.zeros_like(img)
+
+        cv2.drawContours(
+            mask,
+            [contours[0]],
+            -1,
+            255,
+            cv2.FILLED,
+        )
+
+        finger_removal_kernel = cv2.getStructuringElement(
+            cv2.MORPH_ELLIPSE,
+            (21, 21),
+        )
+
+        cleaned_mask = cv2.morphologyEx(
+            mask,
+            cv2.MORPH_OPEN,
+            finger_removal_kernel,
+        )
+
+        contours = self._get_contours(cleaned_mask)
+
+        if not contours:
+            return False
+
+        self.img_processed = cv2.cvtColor(cleaned_mask, cv2.COLOR_GRAY2BGR)
+
         image_area = self._get_image_area(img)
 
         segments = self._extract_edge_segments(contours, image_area)
@@ -70,7 +103,7 @@ class Corners:
         if self.debug:
             draw = Draw(self.img_processed)
             draw.draw_contours([approx["contour"] for approx in approximates], (0, 255, 0))
-            draw.draw_contours([approx["approx"] for approx in approximates], (0, 0, 255))
+            # draw.draw_contours([approx["approx"] for approx in approximates], (0, 0, 255))
 
         return self._is_card_candidate(approximates)
 
@@ -81,6 +114,8 @@ class Corners:
         return False
 
     def show(self) -> None:
+        if self.img_processed is None:
+            self.img_processed = self.img_ndarray.copy()
         cv2.imshow("ID Capture", self.img_processed)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
@@ -135,7 +170,7 @@ class Corners:
         :return:
         """
         # set the area around the line pixel to test
-        kernel = np.ones((15, 15), np.uint8)
+        kernel = np.ones((5, 5), np.uint8)
         # With RETR_EXTERNAL can trace the card's edge as one closed shape instead of many broken pieces.
         closed_edges = cv2.morphologyEx(
             img,
@@ -254,6 +289,14 @@ class Corners:
                 and area_ratio >= 0.05
             )
 
+            print({
+                "corners": len(approx),
+                "convex": is_convex,
+                "aspect_ratio": aspect_ratio,
+                "rectangularity": rectangularity,
+                "area_ratio": area_ratio,
+            })
+
             approximates.append({
                 "contour": contour,
                 "approx": approx,
@@ -315,3 +358,15 @@ class Corners:
                     "angle": angle,
                 })
         return segments
+
+    def _find_straight_lines(self, edges: ndarray) -> Optional[ndarray]:
+        height, width = edges.shape[:2]
+
+        return cv2.HoughLinesP(
+            edges,
+            rho=1,
+            theta=np.pi / 180,
+            threshold=30,
+            minLineLength=int(width * 0.15),
+            maxLineGap=int(width * 0.10),
+        )
