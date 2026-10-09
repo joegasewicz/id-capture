@@ -63,8 +63,10 @@ class Corners:
         if not contours:
             return False
 
+        # Create the cleaned mask - turns think outline into a solid shape.
         mask = self._create_filled_mask(img, contours[0])
         cleaned_mask = self._remove_protrusions(mask)
+        # Create the contours (Outlines of the shape)
         contours = self._get_contours(cleaned_mask)
 
         if not contours:
