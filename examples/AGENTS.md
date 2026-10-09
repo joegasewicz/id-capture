@@ -37,4 +37,3 @@ The user holds a **driving licence card** or a **passport** up to a mobile phone
 - A separate Poetry project (`name = "examples"`) with `tornado` and `marshmallow` as dependencies.
 - Its purpose is demo/example usage of the `id-capture` library (e.g. an upload API).
 - Entry point: `main.py`.
-
