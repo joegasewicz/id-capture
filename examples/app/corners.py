@@ -62,8 +62,6 @@ class Corners:
 
         contours = self._get_contours(img)
 
-
-
         if not contours:
             return False
 
@@ -253,14 +251,6 @@ class Corners:
 
                     if length_ratio > 0.25:
                         continue
-
-                    # if difference <= 15:
-                    #     print(
-                    #         f"Possible opposite sides: "
-                    #         f"{angle_a:.1f} degrees / {angle_b:.1f} | "
-                    #         f"{length_a:.1f}px / {length_b:.1f}px | "
-                    #         f"length difference {length_ratio * 100:.1f}%"
-                    #     )
 
             rect = cv2.minAreaRect(contour)
             _, (rect_width, rect_height), angle = rect

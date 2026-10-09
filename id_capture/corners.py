@@ -62,8 +62,6 @@ class Corners:
 
         contours = self._get_contours(img)
 
-
-
         if not contours:
             return False
 
