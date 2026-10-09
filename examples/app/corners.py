@@ -37,7 +37,7 @@ class Corners:
     def load_image(self) -> None:
         self.img_ndarray = cv2.imread(self.image_path)
 
-    def is_card(self) -> bool:
+    def contains_card(self) -> bool:
         """
         Threshold: Cut off brightness value:
             - pixels above it turn white (255).
@@ -248,13 +248,18 @@ class Corners:
             has_four_corners = len(approx) == 4
             is_convex = cv2.isContourConvex(approx)
 
-            is_card_candidate = (
-                has_four_corners
-                and is_convex
-                and 1.35 <= aspect_ratio <= 1.85
-                and rectangularity >= 0.75
-                and area_ratio >= 0.05
-            )
+            candidate_dict = {
+                "has_four_corners": has_four_corners,
+                "contour": contour,
+                "approx": approx,
+                "area_ratio": area_ratio,
+                "aspect_ratio": aspect_ratio,
+                "rectangularity": rectangularity,
+                "is_card": False,
+                "is_convex": is_convex,
+            }
+
+            candidate_dict["is_card"] = self._is_card(candidate_dict)
 
             print({
                 "corners": len(approx),
@@ -264,14 +269,7 @@ class Corners:
                 "area_ratio": area_ratio,
             })
 
-            approximates.append({
-                "contour": contour,
-                "approx": approx,
-                "area_ratio": area_ratio,
-                "aspect_ratio": aspect_ratio,
-                "rectangularity": rectangularity,
-                "is_card": is_card_candidate,
-            })
+            approximates.append(candidate_dict)
         return approximates
 
     def _extract_edge_segments(self, contours: list, image_area: int) -> list:
@@ -363,3 +361,12 @@ class Corners:
             (kernel_size, kernel_size),
         )
         return cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
+
+    def _is_card(self, candidate: dict) -> bool:
+        return (
+                candidate["has_four_corners"]
+                and candidate["is_convex"]
+                and 1.35 <= candidate["aspect_ratio"] <= 1.85
+                and candidate["rectangularity"] >= 0.75
+                and candidate["area_ratio"] >= 0.05
+        )
