@@ -6,7 +6,7 @@ import numpy as np
 from cv2 import Mat
 from numpy import ndarray, dtypes
 
-from app.draw import Draw
+from id_capture.draw import Draw
 
 
 class Corners:
@@ -58,43 +58,20 @@ class Corners:
         img = self._find_edges(img)
         img = self._fill_line_gaps(img)
 
-        # self.img_processed = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
-
         contours = self._get_contours(img)
 
         if not contours:
             return False
 
-        mask = np.zeros_like(img)
-
-        cv2.drawContours(
-            mask,
-            [contours[0]],
-            -1,
-            255,
-            cv2.FILLED,
-        )
-
-        finger_removal_kernel = cv2.getStructuringElement(
-            cv2.MORPH_ELLIPSE,
-            (21, 21),
-        )
-
-        cleaned_mask = cv2.morphologyEx(
-            mask,
-            cv2.MORPH_OPEN,
-            finger_removal_kernel,
-        )
-
+        mask = self._create_filled_mask(img, contours[0])
+        cleaned_mask = self._remove_protrusions(mask)
         contours = self._get_contours(cleaned_mask)
 
         if not contours:
             return False
 
         self.img_processed = cv2.cvtColor(cleaned_mask, cv2.COLOR_GRAY2BGR)
-
         image_area = self._get_image_area(img)
-
         segments = self._extract_edge_segments(contours, image_area)
         approximates = self._analyse_card_candidates(contours, segments, image_area)
 
@@ -252,14 +229,6 @@ class Corners:
                     if length_ratio > 0.25:
                         continue
 
-                    # if difference <= 15:
-                    #     print(
-                    #         f"Possible opposite sides: "
-                    #         f"{angle_a:.1f} degrees / {angle_b:.1f} | "
-                    #         f"{length_a:.1f}px / {length_b:.1f}px | "
-                    #         f"length difference {length_ratio * 100:.1f}%"
-                    #     )
-
             rect = cv2.minAreaRect(contour)
             _, (rect_width, rect_height), angle = rect
 
@@ -368,3 +337,29 @@ class Corners:
             minLineLength=int(width * 0.15),
             maxLineGap=int(width * 0.10),
         )
+
+    def _create_filled_mask(self, img: ndarray, contour: ndarray) -> ndarray:
+        """
+        Draws the contour as a solid shape on a black canvas the same
+        size as the image.
+        :param img:
+        :param contour:
+        :return:
+        """
+        mask = np.zeros_like(img)
+        cv2.drawContours(mask, [contour], -1, 255, cv2.FILLED)
+        return mask
+
+    def _remove_protrusions(self, mask:ndarray, kernel_size: int = 21) -> ndarray:
+        """
+        Strips thin parts that stick out of the shape, e.g. finders holding
+        the card, while keeping the main body.
+        :param mask:
+        :param kernel_size:
+        :return:
+        """
+        kernel = cv2.getStructuringElement(
+            cv2.MORPH_ELLIPSE,
+            (kernel_size, kernel_size),
+        )
+        return cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
