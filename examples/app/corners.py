@@ -7,6 +7,7 @@ from cv2 import Mat
 from numpy import ndarray, dtypes
 
 from app.draw import Draw
+from app.utils.logger import log, log_json
 
 
 class Corners:
@@ -96,7 +97,6 @@ class Corners:
         cv2.imshow("ID Capture", self.img_processed)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
-
 
     def _reduce_image_size(self, img: ndarray) -> Mat | ndarray:
         """
@@ -263,7 +263,7 @@ class Corners:
 
             candidate_dict["is_card"] = self._is_card(candidate_dict)
 
-            print({
+            log_json("Card candidates", {
                 "corners": len(approx),
                 "convex": is_convex,
                 "aspect_ratio": aspect_ratio,
