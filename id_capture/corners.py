@@ -1,4 +1,3 @@
-from curses.textpad import rectangle
 from typing import Optional
 
 import cv2
@@ -6,7 +5,7 @@ import numpy as np
 from cv2 import Mat
 from numpy import ndarray, dtypes
 
-from app.draw import Draw
+from id_capture.draw import Draw
 
 
 class Corners:

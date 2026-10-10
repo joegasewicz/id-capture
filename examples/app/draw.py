@@ -1,8 +1,6 @@
 import cv2
 from numpy import ndarray
 
-
-
 class Draw:
 
     def __init__(self, img: ndarray):

@@ -15,6 +15,7 @@ dependencies = [
     "ultralytics (>=8.4.174,<9.0.0)",
     "midv500 (>=0.2.1,<0.3.0)",
 ]
+package-mode = false
 
 
 [build-system]
