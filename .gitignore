@@ -3,6 +3,18 @@
 */*/.idea
 data
 
+# JPEG images (all extension letter cases)
+*.[jJ][pP][gG]
+*.[jJ][pP][eE][gG]
+
+# PNG images (all extension letter cases)
+*.[pP][nN][gG]
+
+# Generated training runs and PyTorch weights
+/training/runs/
+/training/weights/
+*.pt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
