@@ -40,9 +40,11 @@ class Corners:
 
     def contains_card(self) -> bool:
         """
-        Threshold: Cut off brightness value:
+        Threshold:
+         A threshold is a cut-off value that sorts every pixel into one of two groups
+         Cut off brightness value:
             - pixels above it turn white (255).
-            - pixels below it turn white (0).
+            - pixels below it turn black (0).
 
         Contour: Contours are the outlines of a shape:
 
@@ -131,6 +133,8 @@ class Corners:
 
     def _find_edges(self, img: ndarray) -> Mat | ndarray:
         """
+        OpenCV’s Canny method is named after John F. Canny, the computer scientist who developed the
+        Canny edge-detection algorithm in 1986.
         All brightness, shading & texture are removed from the image.
         Each pixel is either fully black or fully white.
         :param img:
@@ -143,6 +147,7 @@ class Corners:
 
     def _fill_line_gaps(self, img: ndarray) -> Mat | ndarray:
         """
+        morphologyEx means “extended morphological operations.”
         Joins broken white edge lines into complete outlines.
         :return:
         """

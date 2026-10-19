@@ -3,7 +3,7 @@ from app.corners import Corners
 
 def make_app():
     print(f"Starting...")
-    corners = Corners("data/88.jpg", debug=False)
+    corners = Corners("data/88.jpg", debug=True)
     corners.load_image()
     is_card = corners.contains_card()
     corners.show()
