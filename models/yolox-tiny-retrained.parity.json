@@ -1,0 +1,545 @@
+{
+  "passed": true,
+  "images": 33,
+  "contract": {
+    "schema": 1,
+    "architecture": "yolox_tiny",
+    "classes": [
+      "driving_licence",
+      "passport"
+    ],
+    "size": 416,
+    "input_name": "images",
+    "input_shape": [
+      1,
+      3,
+      416,
+      416
+    ],
+    "preprocessing": "bgr_0_255_top_left_letterbox_114",
+    "output_name": "predictions",
+    "output_shape": [
+      1,
+      3549,
+      7
+    ],
+    "output_format": "decoded_cxcywh_objectness_class_probabilities",
+    "output_columns": [
+      "cx",
+      "cy",
+      "width",
+      "height",
+      "objectness",
+      "p_driving_licence",
+      "p_passport"
+    ],
+    "score": "objectness * max(class_probabilities)",
+    "confidence": 0.2,
+    "nms_iou": 0.65,
+    "nms": "class_aware",
+    "coordinates": "pixels in EXIF-upright original image after inverse letterbox",
+    "source_commit": "6ddff4824372906469a7fae2dc3206c7aa4bbaee",
+    "checkpoint_sha256": "3e90ff4625b8b84b8f147c3229008735bb80a899f37b1968005a8bad468252c8",
+    "validation_targets_met": false
+  },
+  "rows": [
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv2019__26_hrv_drvlic__DG__DG26_01.jpg",
+      "group": "validation:midv2019:0",
+      "detections": 2,
+      "result": {
+        "document_type": "driving_licence",
+        "detection_confidence": 0.857327401638031,
+        "box_xyxy": [
+          51.689544677734375,
+          380.0159912109375,
+          486.5397033691406,
+          579.8917846679688
+        ]
+      },
+      "max_box_tensor_error": 0.0087890625,
+      "max_probability_error": 1.52587890625e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv2019__26_hrv_drvlic__DG__DG26_02.jpg",
+      "group": "validation:midv2019:0",
+      "detections": 2,
+      "result": {
+        "document_type": "driving_licence",
+        "detection_confidence": 0.8402655124664307,
+        "box_xyxy": [
+          53.36730194091797,
+          379.879150390625,
+          484.1379089355469,
+          583.5122680664062
+        ]
+      },
+      "max_box_tensor_error": 0.009521484375,
+      "max_probability_error": 1.4841556549072266e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv2019__26_hrv_drvlic__DG__DG26_03.jpg",
+      "group": "validation:midv2019:0",
+      "detections": 2,
+      "result": {
+        "document_type": "driving_licence",
+        "detection_confidence": 0.7192043662071228,
+        "box_xyxy": [
+          56.786075592041016,
+          379.28515625,
+          482.5509338378906,
+          576.93701171875
+        ]
+      },
+      "max_box_tensor_error": 0.01123046875,
+      "max_probability_error": 1.4424324035644531e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv2019__11_cze_passport__DG__DG11_01.jpg",
+      "group": "validation:midv2019:1",
+      "detections": 1,
+      "result": {
+        "document_type": "passport",
+        "detection_confidence": 0.9618331789970398,
+        "box_xyxy": [
+          119.96334075927734,
+          387.51007080078125,
+          433.6835021972656,
+          765.9268188476562
+        ]
+      },
+      "max_box_tensor_error": 0.00927734375,
+      "max_probability_error": 1.9371509552001953e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv2019__11_cze_passport__DG__DG11_02.jpg",
+      "group": "validation:midv2019:1",
+      "detections": 1,
+      "result": {
+        "document_type": "passport",
+        "detection_confidence": 0.9621322751045227,
+        "box_xyxy": [
+          118.07686614990234,
+          383.4386901855469,
+          431.1551818847656,
+          754.1951293945312
+        ]
+      },
+      "max_box_tensor_error": 0.009765625,
+      "max_probability_error": 2.4318695068359375e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv2019__11_cze_passport__DG__DG11_03.jpg",
+      "group": "validation:midv2019:1",
+      "detections": 1,
+      "result": {
+        "document_type": "passport",
+        "detection_confidence": 0.9570373892784119,
+        "box_xyxy": [
+          110.71208190917969,
+          378.4000549316406,
+          429.5316467285156,
+          756.5967407226562
+        ]
+      },
+      "max_box_tensor_error": 0.01123046875,
+      "max_probability_error": 2.3365020751953125e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv2019__09_chn_id__DG__DG09_01.jpg",
+      "group": "validation:midv2019:None",
+      "detections": 0,
+      "result": {
+        "document_type": "none",
+        "detection_confidence": null,
+        "box_xyxy": null
+      },
+      "max_box_tensor_error": 0.01220703125,
+      "max_probability_error": 1.2934207916259766e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv2019__09_chn_id__DG__DG09_02.jpg",
+      "group": "validation:midv2019:None",
+      "detections": 0,
+      "result": {
+        "document_type": "none",
+        "detection_confidence": null,
+        "box_xyxy": null
+      },
+      "max_box_tensor_error": 0.01123046875,
+      "max_probability_error": 1.4722347259521484e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv2019__09_chn_id__DG__DG09_03.jpg",
+      "group": "validation:midv2019:None",
+      "detections": 0,
+      "result": {
+        "document_type": "none",
+        "detection_confidence": null,
+        "box_xyxy": null
+      },
+      "max_box_tensor_error": 0.0087890625,
+      "max_probability_error": 1.4871358871459961e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv2020__srb_passport__00.jpg",
+      "group": "validation:midv2020:1",
+      "detections": 1,
+      "result": {
+        "document_type": "passport",
+        "detection_confidence": 0.979010283946991,
+        "box_xyxy": [
+          46.92509078979492,
+          326.1632995605469,
+          512.925537109375,
+          688.5203857421875
+        ]
+      },
+      "max_box_tensor_error": 0.00732421875,
+      "max_probability_error": 1.5497207641601562e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv2020__srb_passport__01.jpg",
+      "group": "validation:midv2020:1",
+      "detections": 1,
+      "result": {
+        "document_type": "passport",
+        "detection_confidence": 0.9736320972442627,
+        "box_xyxy": [
+          63.40702819824219,
+          200.9091796875,
+          523.342529296875,
+          533.0616455078125
+        ]
+      },
+      "max_box_tensor_error": 0.01025390625,
+      "max_probability_error": 9.357929229736328e-06
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv2020__srb_passport__02.jpg",
+      "group": "validation:midv2020:1",
+      "detections": 1,
+      "result": {
+        "document_type": "passport",
+        "detection_confidence": 0.9659141898155212,
+        "box_xyxy": [
+          57.2766227722168,
+          276.6613464355469,
+          524.7167358398438,
+          713.7512817382812
+        ]
+      },
+      "max_box_tensor_error": 0.010498046875,
+      "max_probability_error": 1.728534698486328e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv2020__rus_internalpassport__00.jpg",
+      "group": "validation:midv2020:None",
+      "detections": 0,
+      "result": {
+        "document_type": "none",
+        "detection_confidence": null,
+        "box_xyxy": null
+      },
+      "max_box_tensor_error": 0.010986328125,
+      "max_probability_error": 1.2427568435668945e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv2020__rus_internalpassport__01.jpg",
+      "group": "validation:midv2020:None",
+      "detections": 0,
+      "result": {
+        "document_type": "none",
+        "detection_confidence": null,
+        "box_xyxy": null
+      },
+      "max_box_tensor_error": 0.0087890625,
+      "max_probability_error": 9.179115295410156e-06
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv2020__rus_internalpassport__02.jpg",
+      "group": "validation:midv2020:None",
+      "detections": 0,
+      "result": {
+        "document_type": "none",
+        "detection_confidence": null,
+        "box_xyxy": null
+      },
+      "max_box_tensor_error": 0.0087890625,
+      "max_probability_error": 1.767277717590332e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv500__26_hrv_drvlic__CA__CA26_01.jpg",
+      "group": "validation:midv500:0",
+      "detections": 2,
+      "result": {
+        "document_type": "passport",
+        "detection_confidence": 0.9224045276641846,
+        "box_xyxy": [
+          64.52411651611328,
+          358.8686828613281,
+          518.9700317382812,
+          671.7482299804688
+        ]
+      },
+      "max_box_tensor_error": 0.00732421875,
+      "max_probability_error": 1.2159347534179688e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv500__26_hrv_drvlic__CA__CA26_02.jpg",
+      "group": "validation:midv500:0",
+      "detections": 2,
+      "result": {
+        "document_type": "passport",
+        "detection_confidence": 0.9010399580001831,
+        "box_xyxy": [
+          64.34078216552734,
+          357.7649841308594,
+          518.3757934570312,
+          671.0262451171875
+        ]
+      },
+      "max_box_tensor_error": 0.01025390625,
+      "max_probability_error": 1.424551010131836e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv500__26_hrv_drvlic__CA__CA26_03.jpg",
+      "group": "validation:midv500:0",
+      "detections": 1,
+      "result": {
+        "document_type": "driving_licence",
+        "detection_confidence": 0.9204634428024292,
+        "box_xyxy": [
+          63.32070541381836,
+          357.1576232910156,
+          517.679443359375,
+          670.513671875
+        ]
+      },
+      "max_box_tensor_error": 0.00830078125,
+      "max_probability_error": 1.659989356994629e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv500__11_cze_passport__CA__CA11_01.jpg",
+      "group": "validation:midv500:1",
+      "detections": 1,
+      "result": {
+        "document_type": "passport",
+        "detection_confidence": 0.9796275496482849,
+        "box_xyxy": [
+          5.853318214416504,
+          301.6478271484375,
+          516.6756591796875,
+          723.2809448242188
+        ]
+      },
+      "max_box_tensor_error": 0.009033203125,
+      "max_probability_error": 1.3202428817749023e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv500__11_cze_passport__CA__CA11_02.jpg",
+      "group": "validation:midv500:1",
+      "detections": 1,
+      "result": {
+        "document_type": "passport",
+        "detection_confidence": 0.9797772765159607,
+        "box_xyxy": [
+          6.041423797607422,
+          301.7532043457031,
+          516.6773071289062,
+          723.1466064453125
+        ]
+      },
+      "max_box_tensor_error": 0.01025390625,
+      "max_probability_error": 1.1682510375976562e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv500__11_cze_passport__CA__CA11_03.jpg",
+      "group": "validation:midv500:1",
+      "detections": 1,
+      "result": {
+        "document_type": "passport",
+        "detection_confidence": 0.9796367883682251,
+        "box_xyxy": [
+          6.42791748046875,
+          302.1941223144531,
+          517.1340942382812,
+          723.5344848632812
+        ]
+      },
+      "max_box_tensor_error": 0.009033203125,
+      "max_probability_error": 1.341104507446289e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv500__09_chn_id__CA__CA09_01.jpg",
+      "group": "validation:midv500:None",
+      "detections": 0,
+      "result": {
+        "document_type": "none",
+        "detection_confidence": null,
+        "box_xyxy": null
+      },
+      "max_box_tensor_error": 0.01171875,
+      "max_probability_error": 1.582503318786621e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv500__09_chn_id__CA__CA09_02.jpg",
+      "group": "validation:midv500:None",
+      "detections": 0,
+      "result": {
+        "document_type": "none",
+        "detection_confidence": null,
+        "box_xyxy": null
+      },
+      "max_box_tensor_error": 0.00830078125,
+      "max_probability_error": 1.5914440155029297e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv500__09_chn_id__CA__CA09_03.jpg",
+      "group": "validation:midv500:None",
+      "detections": 0,
+      "result": {
+        "document_type": "none",
+        "detection_confidence": null,
+        "box_xyxy": null
+      },
+      "max_box_tensor_error": 0.00830078125,
+      "max_probability_error": 1.5139579772949219e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/raw/driving_licence/driving_licence1.jpg",
+      "group": "phone:driving_licence",
+      "detections": 1,
+      "result": {
+        "document_type": "driving_licence",
+        "detection_confidence": 0.9781813621520996,
+        "box_xyxy": [
+          92.54608154296875,
+          475.91827392578125,
+          656.4304809570312,
+          886.342041015625
+        ]
+      },
+      "max_box_tensor_error": 0.010498046875,
+      "max_probability_error": 1.9103288650512695e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/raw/driving_licence/driving_licence2.jpg",
+      "group": "phone:driving_licence",
+      "detections": 1,
+      "result": {
+        "document_type": "driving_licence",
+        "detection_confidence": 0.9445141553878784,
+        "box_xyxy": [
+          69.71696472167969,
+          427.2423095703125,
+          709.5908203125,
+          788.79443359375
+        ]
+      },
+      "max_box_tensor_error": 0.01171875,
+      "max_probability_error": 1.3619661331176758e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/raw/passport/passport1.jpg",
+      "group": "phone:passport",
+      "detections": 1,
+      "result": {
+        "document_type": "passport",
+        "detection_confidence": 0.26685041189193726,
+        "box_xyxy": [
+          307.4831848144531,
+          53.00056076049805,
+          1013.6963500976562,
+          571.61181640625
+        ]
+      },
+      "max_box_tensor_error": 0.01171875,
+      "max_probability_error": 8.791685104370117e-06
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/raw/passport/passport2.jpg",
+      "group": "phone:passport",
+      "detections": 1,
+      "result": {
+        "document_type": "passport",
+        "detection_confidence": 0.9540623426437378,
+        "box_xyxy": [
+          64.47148132324219,
+          200.5609893798828,
+          683.8014526367188,
+          704.5490112304688
+        ]
+      },
+      "max_box_tensor_error": 0.006591796875,
+      "max_probability_error": 2.944469451904297e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/raw/passport/passport3.jpg",
+      "group": "phone:passport",
+      "detections": 1,
+      "result": {
+        "document_type": "passport",
+        "detection_confidence": 0.7762580513954163,
+        "box_xyxy": [
+          85.10364532470703,
+          468.16558837890625,
+          679.9002075195312,
+          962.4783325195312
+        ]
+      },
+      "max_box_tensor_error": 0.005615234375,
+      "max_probability_error": 2.6226043701171875e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/raw/none/none1.jpg",
+      "group": "phone:none",
+      "detections": 0,
+      "result": {
+        "document_type": "none",
+        "detection_confidence": null,
+        "box_xyxy": null
+      },
+      "max_box_tensor_error": 0.009521484375,
+      "max_probability_error": 1.5735626220703125e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/raw/none/none2.jpg",
+      "group": "phone:none",
+      "detections": 0,
+      "result": {
+        "document_type": "none",
+        "detection_confidence": null,
+        "box_xyxy": null
+      },
+      "max_box_tensor_error": 0.009765625,
+      "max_probability_error": 1.3470649719238281e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/raw/none/none3.jpg",
+      "group": "phone:none",
+      "detections": 0,
+      "result": {
+        "document_type": "none",
+        "detection_confidence": null,
+        "box_xyxy": null
+      },
+      "max_box_tensor_error": 0.01171875,
+      "max_probability_error": 1.7255544662475586e-05
+    },
+    {
+      "path": "/home/joe/PycharmProjects/id-capture/training/data/raw/none/none4.jpg",
+      "group": "phone:none",
+      "detections": 0,
+      "result": {
+        "document_type": "none",
+        "detection_confidence": null,
+        "box_xyxy": null
+      },
+      "max_box_tensor_error": 0.00634765625,
+      "max_probability_error": 1.2487173080444336e-05
+    }
+  ],
+  "scope": "CPU PyTorch/ONNX tensor and detection parity; mobile device not tested",
+  "onnx_sha256": "e9a834da20fd8633c7bfb56c85b8bf4431d7bf97c8d7f2688f99e7f48a8586a0"
+}

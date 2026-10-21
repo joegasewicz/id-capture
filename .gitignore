@@ -13,6 +13,9 @@ data
 # Generated training runs and PyTorch weights
 /training/runs/
 /training/weights/
+/training/vendor/
+/training/data/yolox_all_sources/
+*.pth
 *.pt
 
 # Byte-compiled / optimized / DLL files
