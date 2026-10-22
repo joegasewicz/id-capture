@@ -1,0 +1,301 @@
+{
+  "purpose": "12 reviewed validation false positives for QA; not training data",
+  "model": "models/yolox-tiny-retrained.onnx",
+  "checkpoint_sha256": "3e90ff4625b8b84b8f147c3229008735bb80a899f37b1968005a8bad468252c8",
+  "confidence": 0.2,
+  "nms_iou": 0.65,
+  "coordinates": "xyxy pixels in the supplied prepared image",
+  "selection": "Gallery: 12 highest-confidence failures, maximum 2 per source/design",
+  "scanned_validation_negatives": 2211,
+  "total_validation_failures": 389,
+  "samples": [
+    {
+      "file": "midv2020/39_rus_internalpassport/midv2020__rus_internalpassport__91.jpg",
+      "sha256": "4883b44d8677b84cecc75f1dac20a2220288be80a89492159cf5627066e11b2d",
+      "source": "midv2020",
+      "design": "39_rus_internalpassport",
+      "split": "val",
+      "expected": "none",
+      "prepared_image": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv2020__rus_internalpassport__91.jpg",
+      "original_image": "/home/joe/training-data/midv2020/photo.tar::images/rus_internalpassport/91.jpg",
+      "width": 540,
+      "height": 960,
+      "detections": [
+        {
+          "predicted": "passport",
+          "confidence": 0.9819665551185608,
+          "box_xyxy": [
+            32.45834732055664,
+            407.6687316894531,
+            483.6568298339844,
+            730.2481079101562
+          ]
+        }
+      ]
+    },
+    {
+      "file": "midv500/33_mac_id/midv500__33_mac_id__KA__KA33_20.jpg",
+      "sha256": "963f3e07c666acc7823fbb5c33bd1070be89abc7f46ea732b8656e6097627586",
+      "source": "midv500",
+      "design": "33_mac_id",
+      "split": "val",
+      "expected": "none",
+      "prepared_image": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv500__33_mac_id__KA__KA33_20.jpg",
+      "original_image": "/home/joe/training-data/midv500/33_mac_id/images/KA/KA33_20.tif",
+      "width": 540,
+      "height": 960,
+      "detections": [
+        {
+          "predicted": "driving_licence",
+          "confidence": 0.9815908074378967,
+          "box_xyxy": [
+            44.00962829589844,
+            212.65335083007812,
+            482.9574890136719,
+            518.971435546875
+          ]
+        }
+      ]
+    },
+    {
+      "file": "midv2020/39_rus_internalpassport/midv2020__rus_internalpassport__53.jpg",
+      "sha256": "e35065a4ecab26e68bba86d88ffa3e29a7ecac2fe1ec1c367e9e5982c6095863",
+      "source": "midv2020",
+      "design": "39_rus_internalpassport",
+      "split": "val",
+      "expected": "none",
+      "prepared_image": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv2020__rus_internalpassport__53.jpg",
+      "original_image": "/home/joe/training-data/midv2020/photo.tar::images/rus_internalpassport/53.jpg",
+      "width": 540,
+      "height": 960,
+      "detections": [
+        {
+          "predicted": "passport",
+          "confidence": 0.9811145067214966,
+          "box_xyxy": [
+            57.873985290527344,
+            270.1365661621094,
+            483.5209655761719,
+            553.1399536132812
+          ]
+        }
+      ]
+    },
+    {
+      "file": "midv500/33_mac_id/midv500__33_mac_id__KA__KA33_17.jpg",
+      "sha256": "6e429228e98cf1a27f68f63f054637ab97d239291d987f39cac8e816846b837e",
+      "source": "midv500",
+      "design": "33_mac_id",
+      "split": "val",
+      "expected": "none",
+      "prepared_image": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv500__33_mac_id__KA__KA33_17.jpg",
+      "original_image": "/home/joe/training-data/midv500/33_mac_id/images/KA/KA33_17.tif",
+      "width": 540,
+      "height": 960,
+      "detections": [
+        {
+          "predicted": "driving_licence",
+          "confidence": 0.9808785915374756,
+          "box_xyxy": [
+            45.014102935791016,
+            221.21141052246094,
+            491.885498046875,
+            525.4901733398438
+          ]
+        }
+      ]
+    },
+    {
+      "file": "midv2019/09_chn_id/midv2019__09_chn_id__LG__LG09_29.jpg",
+      "sha256": "ff9b85a5ca9ed361cb7db4fc8eb28155a85ff1196d210d2aca795b66f78e999f",
+      "source": "midv2019",
+      "design": "09_chn_id",
+      "split": "val",
+      "expected": "none",
+      "prepared_image": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv2019__09_chn_id__LG__LG09_29.jpg",
+      "original_image": "/home/joe/training-data/midv2019/09_chn_id/images/LG/LG09_29.tif",
+      "width": 540,
+      "height": 960,
+      "detections": [
+        {
+          "predicted": "driving_licence",
+          "confidence": 0.97987300157547,
+          "box_xyxy": [
+            69.52503967285156,
+            492.62744140625,
+            438.59326171875,
+            744.8977661132812
+          ]
+        }
+      ]
+    },
+    {
+      "file": "midv2019/33_mac_id/midv2019__33_mac_id__LX__LX33_20.jpg",
+      "sha256": "5096649105a395948cb3f8792bf8d52f6f4199d3c32ca702690693480c5b04d9",
+      "source": "midv2019",
+      "design": "33_mac_id",
+      "split": "val",
+      "expected": "none",
+      "prepared_image": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv2019__33_mac_id__LX__LX33_20.jpg",
+      "original_image": "/home/joe/training-data/midv2019/33_mac_id/images/LX/LX33_20.tif",
+      "width": 540,
+      "height": 960,
+      "detections": [
+        {
+          "predicted": "driving_licence",
+          "confidence": 0.9797140955924988,
+          "box_xyxy": [
+            49.24338150024414,
+            302.01068115234375,
+            484.2345886230469,
+            586.0777587890625
+          ]
+        }
+      ]
+    },
+    {
+      "file": "midv2019/33_mac_id/midv2019__33_mac_id__LX__LX33_17.jpg",
+      "sha256": "9e8c25ad26821f3e31c43427c1096f17f1bafa510655354de998ff89a39c1148",
+      "source": "midv2019",
+      "design": "33_mac_id",
+      "split": "val",
+      "expected": "none",
+      "prepared_image": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv2019__33_mac_id__LX__LX33_17.jpg",
+      "original_image": "/home/joe/training-data/midv2019/33_mac_id/images/LX/LX33_17.tif",
+      "width": 540,
+      "height": 960,
+      "detections": [
+        {
+          "predicted": "driving_licence",
+          "confidence": 0.9795774817466736,
+          "box_xyxy": [
+            54.847923278808594,
+            340.6128845214844,
+            479.5279235839844,
+            614.765625
+          ]
+        }
+      ]
+    },
+    {
+      "file": "midv2019/09_chn_id/midv2019__09_chn_id__LG__LG09_28.jpg",
+      "sha256": "7dc858c2b35f72562ad4cd6784090074deb54770a40c4de7968622d045e2161c",
+      "source": "midv2019",
+      "design": "09_chn_id",
+      "split": "val",
+      "expected": "none",
+      "prepared_image": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv2019__09_chn_id__LG__LG09_28.jpg",
+      "original_image": "/home/joe/training-data/midv2019/09_chn_id/images/LG/LG09_28.tif",
+      "width": 540,
+      "height": 960,
+      "detections": [
+        {
+          "predicted": "driving_licence",
+          "confidence": 0.9790617823600769,
+          "box_xyxy": [
+            68.12561798095703,
+            489.6718444824219,
+            437.8988037109375,
+            744.247314453125
+          ]
+        }
+      ]
+    },
+    {
+      "file": "midv2019/39_rus_internalpassport/midv2019__39_rus_internalpassport__LG__LG39_06.jpg",
+      "sha256": "d8947e0b4e8928eb1a902287849b5ff932fe62e9b867f7ce7602391b18fbae44",
+      "source": "midv2019",
+      "design": "39_rus_internalpassport",
+      "split": "val",
+      "expected": "none",
+      "prepared_image": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv2019__39_rus_internalpassport__LG__LG39_06.jpg",
+      "original_image": "/home/joe/training-data/midv2019/39_rus_internalpassport/images/LG/LG39_06.tif",
+      "width": 540,
+      "height": 960,
+      "detections": [
+        {
+          "predicted": "driving_licence",
+          "confidence": 0.9759067296981812,
+          "box_xyxy": [
+            63.62360382080078,
+            274.7449951171875,
+            480.51409912109375,
+            580.2149047851562
+          ]
+        }
+      ]
+    },
+    {
+      "file": "midv2019/39_rus_internalpassport/midv2019__39_rus_internalpassport__DG__DG39_26.jpg",
+      "sha256": "ae65da5693fda9dc3f639427bffc09a6099d0ab46f119039bcdb995a1e38c93a",
+      "source": "midv2019",
+      "design": "39_rus_internalpassport",
+      "split": "val",
+      "expected": "none",
+      "prepared_image": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv2019__39_rus_internalpassport__DG__DG39_26.jpg",
+      "original_image": "/home/joe/training-data/midv2019/39_rus_internalpassport/images/DG/DG39_26.tif",
+      "width": 540,
+      "height": 960,
+      "detections": [
+        {
+          "predicted": "passport",
+          "confidence": 0.9740594029426575,
+          "box_xyxy": [
+            22.101957321166992,
+            460.34228515625,
+            383.541748046875,
+            768.3738403320312
+          ]
+        }
+      ]
+    },
+    {
+      "file": "midv500/39_rus_internalpassport/midv500__39_rus_internalpassport__CA__CA39_25.jpg",
+      "sha256": "113e05a91f8fd7e39a57a75d85bec25e9e7e5c3a1fe84b9bb2820e387539b67d",
+      "source": "midv500",
+      "design": "39_rus_internalpassport",
+      "split": "val",
+      "expected": "none",
+      "prepared_image": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv500__39_rus_internalpassport__CA__CA39_25.jpg",
+      "original_image": "/home/joe/training-data/midv500/39_rus_internalpassport/images/CA/CA39_25.tif",
+      "width": 540,
+      "height": 960,
+      "detections": [
+        {
+          "predicted": "passport",
+          "confidence": 0.9495373964309692,
+          "box_xyxy": [
+            51.30527114868164,
+            395.5007629394531,
+            475.79840087890625,
+            686.3272705078125
+          ]
+        }
+      ]
+    },
+    {
+      "file": "midv500/09_chn_id/midv500__09_chn_id__KS__KS09_08.jpg",
+      "sha256": "e2d04b203fd0f0a9f4fc26d276e291a0398886c954c0837d352a9a60ca334bc3",
+      "source": "midv500",
+      "design": "09_chn_id",
+      "split": "val",
+      "expected": "none",
+      "prepared_image": "/home/joe/PycharmProjects/id-capture/training/data/yolox_all_sources/images/val/midv500__09_chn_id__KS__KS09_08.jpg",
+      "original_image": "/home/joe/training-data/midv500/09_chn_id/images/KS/KS09_08.tif",
+      "width": 540,
+      "height": 960,
+      "detections": [
+        {
+          "predicted": "driving_licence",
+          "confidence": 0.9466188549995422,
+          "box_xyxy": [
+            36.30736541748047,
+            391.3846740722656,
+            532.2213134765625,
+            712.0536499023438
+          ]
+        }
+      ]
+    }
+  ]
+}

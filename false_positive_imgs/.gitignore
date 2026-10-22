@@ -1,0 +1,2 @@
+# Permit these QA fixture JPEGs despite parent image ignores.
+!*.jpg
